@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Labs | Next-Gen Multi-Dimensional Web Agency</title>
+    <style>
+        /* --- CORE CONFIGURATION & NEON THEME --- */
+        :root {
+            --bg-dark: #04040a;
+            --bg-cards: rgba(255, 255, 255, 0.03);
+            --border-glow: rgba(0, 242, 254, 0.15);
+            --neon-cyan: #00f2fe;
+            --neon-blue: #4facfe;
+            --neon-purple: #7f00ff;
+            --neon-green: #00ff87;
+            --text-pure: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-pure);
+            overflow-x: hidden;
+            perspective: 1000px;
+            position: relative;
+        }
+
+        /* Fixed Background Canvas mapping across the entire website height */
+        #spatial-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at center, #0a0a16 0%, #04040a 100%);
+        }
+
+        /* --- NAVIGATION BAR --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(4, 4, 10, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+
+        .logo-space {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        /* --- GLOBAL LAYOUT STRUCTURE --- */
+        section {
+            padding: 100px 5% 60px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            z-index: 1;
+        }
+
+        .section-header {
+            margin-bottom: 50px;
+            max-width: 800px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* --- SECTION 1: HOME --- */
+        #home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 5% 60px;
+        }
+
+        .hero-cube {
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        #home h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin-bottom: 25px;
+            background: linear-gradient(180deg, #ffffff 40%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #home p {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .action-hub {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-prime {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+            color: #000;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .btn-prime:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 50px var(--neon-cyan);
+        }
+
+        /* --- SECTION 2: ABOUT US & TECH STACK --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-text {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+        }
+
+        .tech-stack {
+            margin-top: 30px;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            padding: 30px 20px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: var(--neon-cyan);
+            background: rgba(0, 242, 254, 0.03);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.15);
+        }
+
+        .stat-box h3 {
+            font-size: 2.2rem;
+            color: var(--neon-cyan);
+            margin-bottom: 8px;
+        }
+
+        .stat-box p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* --- SECTION 3: OUR PROCESS --- */
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .process-step {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            padding: 35px 25px;
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 15px 35px rgba(127, 0, 255, 0.15);
+        }
+
+        .step-num {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            opacity: 0.25;
+        }
+
+        .process-step h4 {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .process-step p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- SECTION 4: PORTFOLIO --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .project-card {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 20px 40px rgba(79, 172, 254, 0.2);
+        }
+
+        .project-img-holder {
+            height: 200px;
+            position: relative;
+            border-bottom: 1px solid var(--border-glow);
+            overflow: hidden;
+        }
+
+        .project-img-holder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-img-holder img {
+            transform: scale(1.08);
+        }
+
+        .project-info {
+            padding: 25px;
+        }
+
+        .project-info h4 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .project-info p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .project-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        /* --- SECTION: EID EXCLUSIVE DISPLAY --- */
+        .eid-exclusive-container {
+            background: rgba(0, 255, 135, 0.02);
+            border-top: 1px dashed rgba(0, 255, 135, 0.2);
+            border-bottom: 1px dashed rgba(0, 255, 135, 0.2);
+        }
+
+        .eid-exclusive-container .section-header h2 {
+            background: linear-gradient(135deg, #ffffff 0%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .eid-showcase-card {
+            background: radial-gradient(circle at top right, rgba(0, 255, 135, 0.08), rgba(4, 4, 10, 0.8));
+            border: 2px solid var(--neon-green);
+            border-radius: 24px;
+            padding: 50px 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .eid-showcase-card:hover {
+            box-shadow: 0 25px 60px rgba(0, 255, 135, 0.2);
+        }
+
+        .eid-floating-tag {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: linear-gradient(45deg, #00b4db, var(--neon-green));
+            color: #000;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 25px rgba(0, 255, 135, 0.4);
+        }
+
+        .eid-left-panel h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .eid-left-panel p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .eid-price-display {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .eid-price-tag {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            text-shadow: 0 0 40px rgba(0, 255, 135, 0.3);
+        }
+
+        .eid-price-sub {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .eid-right-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 135, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .eid-blueprint-list {
+            list-style: none;
+        }
+
+        .eid-blueprint-list li {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .eid-blueprint-list li::before {
+            content: '🌙';
+            margin-right: 12px;
+            color: var(--neon-green);
+        }
+
+        .eid-action-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(45deg, var(--neon-green), #00f2fe);
+            color: #000;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 255, 135, 0.2);
+        }
+
+        .eid-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--neon-green);
+        }
+
+        /* --- SECTION 5: SERVICES & PACKAGES --- */
+        .cards-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .tilt-card {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 40px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .tilt-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 25px 50px rgba(79, 172, 254, 0.2);
+        }
+
+        .tilt-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .pkg-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--neon-cyan);
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .feature-blueprint {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .feature-blueprint li {
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-blueprint li::before {
+            content: '⚡';
+            color: var(--neon-cyan);
+            margin-right: 10px;
+        }
+
+        .pkg-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            color: var(--text-pure);
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.01);
+            transition: all 0.3s;
+        }
+
+        .tilt-card.prime-tier {
+            border-color: rgba(0, 242, 254, 0.3);
+            background: rgba(0, 242, 254, 0.02);
+        }
+
+        .tilt-card.prime-tier .pkg-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+            color: #000;
+            border: none;
+        }
+
+        /* --- SECTION 6: TESTIMONIALS --- */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .review-card {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            padding: 35px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            border-color: var(--neon-cyan);
+        }
+
+        .review-card p {
+            color: var(--text-dim);
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .client-info h5 {
+            font-size: 1.05rem;
+            color: #fff;
+        }
+
+        .client-info span {
+            font-size: 0.8rem;
+            color: var(--neon-cyan);
+        }
+
+        /* --- SECTION 7: CONTACT US --- */
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 40px;
+        }
+
+        .contact-intel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .intel-card {
+            background: var(--bg-cards);
+            border: 1px solid var(--border-glow);
+            padding: 25px;
+            border-radius: 16px;
+        }
+
+        .intel-card h4 {
+            color: var(--neon-cyan);
+            font-size: 1rem;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .intel-card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glow);
+            padding: 35px;
+            border-radius: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(4, 4, 10, 0.9);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            padding: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+            color: #000;
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 0 30px var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 40px 5%;
+            text-align: center;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border-glow);
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- MOBILE & TABLET RESPONSIVENESS CONTROLLER --- */
+        @media (max-width: 1024px) {
+            .portfolio-grid, .reviews-grid, .cards-matrix { grid-template-columns: repeat(2, 1fr); }
+            .process-flow { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .about-grid, .contact-layout, .eid-showcase-card { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 15px 4%; flex-direction: column; gap: 15px; text-align: center; position: absolute; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; }
+            section { padding: 80px 4% 40px; }
+            .section-header h2 { font-size: 2rem; }
+            #home { padding-top: 160px; }
+            #home h1 { font-size: 2.3rem; }
+            #home p { font-size: 1rem; }
+            .portfolio-grid, .reviews-grid, .process-flow, .cards-matrix, .form-row { grid-template-columns: 1fr; }
+            .about-stats { grid-template-columns: 1fr; }
+            .eid-showcase-card { padding: 30px 20px; }
+            .eid-left-panel h3 { font-size: 1.8rem; }
+            .eid-price-tag { font-size: 3rem; }
+            .contact-form { padding: 20px; }
+            .eid-floating-tag { left: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="spatial-canvas"></canvas>
+
+    <nav>
+        <div class="logo-space">DEV LABS</div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#process">Our Process</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#services">Packages</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <div class="hero-cube" id="dynamic-hero">
+            <h1>Immersive Digital Spaces<br>Built For The Next Era</h1>
+            <p>Welcome to Dev Labs. We engineer premium interactive websites, spatial interfaces, and secure digital architectures that convert occasional visitors into lifetime dedicated enterprise clients.</p>
+            <div class="action-hub">
+                <a href="#services" class="btn-prime">Explore Packages</a>
+                <a href="#contact" class="btn-prime" style="background: transparent; border: 1px solid var(--neon-cyan); color: #fff;">Let's Talk</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="section-header">
+            <h2>Our Architectural Vision</h2>
+            <p>A high-performance creative agency dedicated to completely redefining your brand's virtual presence.</p>
+        </div>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>At Dev Labs, we believe standard templates destroy corporate value. In an era where everyone uses basic alignments, your business needs an identity that instantly demands absolute authority.</p>
+                <p>We treat web layout design as architectural science. Every micro-interaction, particle speed, and responsive system is optimized to guarantee lightning-fast rendering speeds, deep visual engagement, and extreme cross-browser compatibility.</p>
+                <div class="tech-stack">
+                    <h4 style="color:#fff; font-size:0.9rem; letter-spacing:1px;">OUR BATTLE-TESTED TECH MATRIX:</h4>
+                    <div class="tech-badges">
+                        <span class="badge">HTML5/CSS3 Spatial</span>
+                        <span class="badge">Vanilla ES6+ JavaScript</span>
+                        <span class="badge">WebGL Core Rendering</span>
+                        <span class="badge">Hardware Accelerated CSS</span>
+                        <span class="badge">Enterprise SEO Architecture</span>
+                    </div>
+                </div>
+            </div>
+            <div class="about-stats">
+                <div class="stat-box">
+                    <h3 class="stat-count" data-target="99" data-suffix="%">0%</h3>
+                    <p>System Conversion Precision</p>
+                </div>
+                <div class="stat-box">
+                    <h3 class="stat-count" data-target="150" data-suffix="+">0+</h3>
+                    <p>Global Digital Pipelines</p>
+                </div>
+                <div class="stat-box">
+                    <h3 class="stat-count" data-target="3" data-suffix="X">0X</h3>
+                    <p>User Engagement Multiplier</p>
+                </div>
+                <div class="stat-box">
+                    <h3 class="stat-count" data-target="24" data-suffix="/7">0/7</h3>
+                    <p>Server-Side Support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="process">
+        <div class="section-header">
+            <h2>The Structural Workflow</h2>
+            <p>How our elite development squad translates your complex visions into fully operational web ecosystems.</p>
+        </div>
+        <div class="process-flow">
+            <div class="process-step">
+                <span class="step-num">01</span>
+                <h4>Discovery & Audit</h4>
+                <p>We analyze your direct market competitors, define targeted user flows, and structure optimal system requirements.</p>
+            </div>
+            <div class="process-step">
+                <span class="step-num">02</span>
+                <h4>Interactive Design</h4>
+                <p>Our engineers sketch high-fidelity custom prototypes focused on 3D depth, glowing accents, and fluid layouts.</p>
+            </div>
+            <div class="process-step">
+                <span class="step-num">03</span>
+                <h4>Production Code</h4>
+                <p>We build using lightweight vanilla scripts ensuring clean semantics, zero bloatware, and maximum security.</p>
+            </div>
+            <div class="process-step">
+                <span class="step-num">04</span>
+                <h4>Global Deployment</h4>
+                <p>Complete execution of optimization configurations, performance audits, and launch on high-speed servers.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <div class="section-header">
+            <h2>Recent Case Manifests</h2>
+            <p>A premier exhibition of high-end corporate layouts designed and coded by the Dev Labs network.</p>
+        </div>
+        <div class="portfolio-grid">
+            <div class="project-card">
+                <div class="project-img-holder">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500" alt="Nexus Project">
+                </div>
+                <div class="project-info">
+                    <span class="project-tag">E-Commerce Ecosystem</span>
+                    <h4>Nexus Retail Vault</h4>
+                    <p>A full spatial digital retail environment displaying premium luxury consumer products with fluid micro-actions.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img-holder">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500" alt="Crypto Hub">
+                </div>
+                <div class="project-info">
+                    <span class="project-tag">Fintech Dashboard</span>
+                    <h4>Aether Crypto Hub</h4>
+                    <p>High-security data processing visualization matrix tailored for real-time asset tracking.</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img-holder">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500" alt="SaaS Cloud">
+                </div>
+                <div class="project-info">
+                    <span class="project-tag">SaaS Platform</span>
+                    <h4>Matrix Cloud Core</h4>
+                    <p>Corporate cloud workspace infrastructure architecture layout designed to maximize workflow efficiency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="eid-exclusive-container">
+        <div class="section-header">
+            <h2>Seasonal Enterprise Campaign</h2>
+            <p>Premium specialized development slots curated for active global corporate expansions.</p>
+        </div>
+        
+        <div class="eid-showcase-card">
+            <div class="eid-floating-tag">Limited Time Blessing</div>
+            
+            <div class="eid-left-panel">
+                <h3>Bakra Eid <br>Exclusive Offer</h3>
+                <p>Specially crafted for our Muslim community worldwide. Celebrate this Eid-ul-Adha by completely modernizing your company's virtual infrastructure with advanced spatial mechanics at a fraction of the cost.</p>
+                <div class="eid-price-display">
+                    <span class="eid-price-tag">$290</span>
+                    <span class="eid-price-sub">$650 Standard</span>
+                </div>
+            </div>
+
+            <div class="eid-right-panel">
+                <ul class="eid-blueprint-list">
+                    <li>Premium High-Conversion Website Layout</li>
+                    <li>Advanced Interactive Pseudo-3D Depth</li>
+                    <li>Full Dynamic Mobile Optimization</li>
+                    <li>Custom Smooth Micro-Animations</li>
+                    <li>Dedicated SEO Setup Configuration</li>
+                    <li>60 Days Enhanced Infrastructure Support</li>
+                </ul>
+                <a href="#contact" class="eid-action-btn">Claim Blessed Eid Offer</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="section-header">
+            <h2>Premium Strategic Packages</h2>
+            <p>Transparent pricing models built to scale your virtual capabilities safely and aggressively.</p>
+        </div>
+        <div class="cards-matrix">
+            <div class="tilt-card">
+                <h3>Core Architecture</h3>
+                <span class="pkg-price">$499</span>
+                <ul class="feature-blueprint">
+                    <li>Custom High-Fidelity Blueprint UI</li>
+                    <li>Fully Fluid Mobile Responsive Layout</li>
+                    <li>5 Core Operational Pages</li>
+                    <li>Standard Spatial Interactions</li>
+                    <li>Optimized Speed Performance</li>
+                    <li>30 Days System Maintenance Support</li>
+                </ul>
+                <a href="#contact" class="pkg-btn">Acquire System</a>
+            </div>
+
+            <div class="tilt-card prime-tier">
+                <h3>Immersive 3D Spatial</h3>
+                <span class="pkg-price">$999</span>
+                <ul class="feature-blueprint">
+                    <li>Advanced Pseudo-3D Perspective Plane</li>
+                    <li>Interactive Dynamic Particle Background</li>
+                    <li>Up to 10 Premium Structural Pages</li>
+                    <li>Bespoke Advanced UI Animation Scripts</li>
+                    <li>Full Schema Search Engine Deployment</li>
+                    <li>180 Days Priority Infrastructure Support</li>
+                </ul>
+                <a href="#contact" class="pkg-btn">Acquire Premium</a>
+            </div>
+
+            <div class="tilt-card">
+                <h3>Quantum Enterprise</h3>
+                <span class="pkg-price">$1,999</span>
+                <ul class="feature-blueprint">
+                    <li>Immersive Hardware Accelerated Engine</li>
+                    <li>Unlimited Content Management System</li>
+                    <li>High-Conversion Strategic Copywriting</li>
+                    <li>Comprehensive Branding Core Assets</li>
+                    <li>Dedicated Network Solutions Engineer</li>
+                    <li>365 Days Mission-Critical Maintenance</li>
+                </ul>
+                <a href="#contact" class="pkg-btn">Deploy Enterprise</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews">
+        <div class="section-header">
+            <h2>Transmission Feedbacks</h2>
+            <p>Verified endorsements from companies that transformed their systems through the Dev Labs protocol.</p>
+        </div>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <p>"Dev Labs completely revolutionized our product interface. The interactive 3D elements helped us scale user engagement by almost 250% within the first initial quarter."</p>
+                <div class="client-info"><h5>Zayn Malik</h5><span>Director, Alpha Systems</span></div>
+            </div>
+            <div class="review-card">
+                <p>"The extreme responsiveness, ultra-clean code quality, and neon aesthetics gave our software platform massive authority over our global industry competitors."</p>
+                <div class="client-info"><h5>Sara Khan</h5><span>VP of Design, FinVault</span></div>
+            </div>
+            <div class="review-card">
+                <p>"Absolute professionals. Their custom process workflow kept us fully synchronized, and the performance speed of our new application is simply outstanding."</p>
+                <div class="client-info"><h5>Hamza Ahmed</h5><span>Founder, CoreTech Global</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="section-header">
+            <h2>Initiate Connection Link</h2>
+            <p>Secure your slot in our production cycle. Complete the parameters below to connect instantly.</p>
+        </div>
+        <div class="contact-layout">
+            <div class="contact-intel">
+                <div class="intel-card">
+                    <h4>Direct Protocol</h4>
+                    <p>nexus@devlabs.io</p>
+                    <p>+92 328 1247768</p>
+                </div>
+                <div class="intel-card">
+                    <h4>Operations Command</h4>
+                    <p>Phase VIII, Custom Spatial Grid</p>
+                    <p>Karachi, Pakistan</p>
+                </div>
+            </div>
+            <div class="contact-form">
+                <form onsubmit="event.preventDefault(); alert('Transmission Successful!');">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Operator Name</label>
+                            <input type="text" class="form-control" placeholder="Ali Ahmed" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Digital Mail</label>
+                            <input type="email" class="form-control" placeholder="name@domain.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Targeted Package Plane</label>
+                        <select class="form-control">
+                            <option>Bakra Eid Exclusive Offer ($290)</option>
+                            <option>Core Architecture ($499)</option>
+                            <option>Immersive 3D Spatial ($999)</option>
+                            <option>Quantum Enterprise ($1,999)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Matrix Parameters</label>
+                        <textarea class="form-control" placeholder="Outline your vision and structural timelines..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Transmit Secure Signal</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Dev Labs Inc. All virtual dimensions and spatial matrices secured.</p>
+    </footer>
+
+    <script>
+        /*** 1. GLOBAL SCROLLABLE CANVAS SETUP FOR ALL SECTIONS ***/
+        const canvas = document.getElementById('spatial-canvas');
+        const ctx = canvas.getContext('2d');
+        let balls = [];
+        const maxBalls = 250; // Balls quantity increased to span across the total document height flawlessly
+
+        function fitCanvasToDocument() {
+            canvas.width = window.innerWidth;
+            // Sets canvas height exactly to the total scrollable page height
+            canvas.height = document.documentElement.scrollHeight;
+        }
+        
+        // Initial setup and safe re-calculation when dynamic content finishes loading
+        window.addEventListener('load', fitCanvasToDocument);
+        window.addEventListener('resize', fitCanvasToDocument);
+        fitCanvasToDocument();
+
+        class EmotionBall {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                // Distribute particles across the entire scrollable height from top to bottom
+                this.y = Math.random() * canvas.height;
+                // Sleek small-medium elegant size configuration
+                this.radius = Math.random() * 3 + 3; 
+                this.speedX = (Math.random() * 0.4 - 0.2);
+                this.speedY = (Math.random() * 0.4 - 0.2);
+                this.opacity = Math.random() * 0.35 + 0.15;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Seamless infinite wrapping across total document space limits
+                if (this.x < -this.radius) this.x = canvas.width + this.radius;
+                if (this.x > canvas.width + this.radius) this.x = -this.radius;
+                if (this.y < -this.radius) this.y = canvas.height + this.radius;
+                if (this.y > canvas.height + this.radius) this.y = -this.radius;
+            }
+            draw() {
+                ctx.beginPath();
+                let gradient = ctx.createRadialGradient(this.x - this.radius*0.2, this.y - this.radius*0.2, 0.5, this.x, this.y, this.radius);
+                gradient.addColorStop(0, `rgba(0, 242, 254, ${this.opacity})`);
+                gradient.addColorStop(0.6, `rgba(79, 172, 254, ${this.opacity * 0.5})`);
+                gradient.addColorStop(1, 'rgba(0, 242, 254, 0)');
+                
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+        }
+
+        // Initialize particles throughout the total expanded body canvas scope
+        for (let i = 0; i < maxBalls; i++) {
+            balls.push(new EmotionBall());
+        }
+
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            balls.forEach(ball => {
+                ball.update();
+                ball.draw();
+            });
+            requestAnimationFrame(animationLoop);
+        }
+        animationLoop();
+
+        /*** 2. HERO INTERACTIVE MOTION EFFECT ***/
+        const heroNode = document.getElementById('dynamic-hero');
+        window.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const rotX = ((centerY - e.clientY) / centerY) * 6; 
+            const rotY = ((e.clientX - centerX) / centerX) * 6;
+            if(heroNode && window.innerWidth > 768) {
+                heroNode.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            }
+        });
+
+        /*** 3. NAVBAR ACTIVE SCROLL LINK DETECTOR ***/
+        const sections = document.querySelectorAll('section');
+        const navItems = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(sec => {
+                const secTop = sec.offsetTop;
+                if (window.pageYOffset >= secTop - 160) {
+                    current = sec.getAttribute('id');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${current}`) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        /*** 4. INTERSECTION OBSERVER FOR VISUAL STATUS COUNTERS ***/
+        const counterNodes = document.querySelectorAll('.stat-count');
+        const trackingObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    const node = entry.target;
+                    const finalTarget = parseInt(node.getAttribute('data-target'), 10);
+                    const suffix = node.getAttribute('data-suffix') || '';
+                    let startingValue = 0;
+                    
+                    const totalDuration = 2000; 
+                    const refreshRate = 30; 
+                    const totalTicks = totalDuration / refreshRate;
+                    const incrementVal = finalTarget / totalTicks;
+                    
+                    const intervalTimer = setInterval(() => {
+                        startingValue += incrementVal;
+                        if(startingValue >= finalTarget) {
+                            node.innerText = finalTarget + suffix;
+                            clearInterval(intervalTimer);
+                        } else {
+                            node.innerText = Math.floor(startingValue) + suffix;
+                        }
+                    }, refreshRate);
+                    
+                    observer.unobserve(node);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        counterNodes.forEach(node => trackingObserver.observe(node));
+    </script>
+</body>
+</html>
